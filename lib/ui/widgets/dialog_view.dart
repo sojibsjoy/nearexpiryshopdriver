@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:nearexpiryshopdriver/constants/colors.dart';
+import 'package:nearexpiryshopdriver/constants/strings.dart';
 import 'package:nearexpiryshopdriver/states/controllers/home.dart';
 import 'package:nearexpiryshopdriver/states/models/cancel_reasons/cancel_reasons.dart';
 import 'package:nearexpiryshopdriver/states/models/order_details/order_details.dart';
@@ -84,7 +85,7 @@ class _DialogViewState extends State<DialogView> {
               _submittedFlag = true;
               _homeCon.updateOrderStatus(
                 invoiceId: widget.oDetailsModel.invoiceId,
-                invoiceStatusId: 6,
+                invoiceStatusId: ConstantStrings.kCancelled,
                 cancelReasonId: cancelReasonId,
                 cancelDescription: _declineDetailsCon.text,
               );
@@ -160,8 +161,7 @@ class _DialogViewState extends State<DialogView> {
               _submittedFlag = true;
               _homeCon.updateOrderStatus(
                 invoiceId: widget.oDetailsModel.invoiceId,
-                // here 14 means Accept.
-                invoiceStatusId: 14,
+                invoiceStatusId: ConstantStrings.kAccepted,
               );
               updatedOrderStatus = 'Order Accepted!';
             }),

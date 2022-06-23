@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nearexpiryshopdriver/states/controllers/home.dart';
+import 'package:nearexpiryshopdriver/states/data/prefs.dart';
 import 'package:nearexpiryshopdriver/states/helpers/date_formatter.dart';
 import 'package:nearexpiryshopdriver/ui/screens/home/card_item.dart';
 import 'package:nearexpiryshopdriver/ui/widgets/custom_btn.dart';
@@ -18,7 +19,14 @@ class OrdersScreen extends StatefulWidget {
 
 class _OrdersScreenState extends State<OrdersScreen> {
   final HomeController _homeCon = Get.find<HomeController>();
+  int driverId = 1; // 1 for default
   DateTime orderDate = DateTime.now();
+
+  @override
+  void initState() {
+    driverId = Preference.getDriverID();
+    super.initState();
+  }
 
   int selectedBtnId = 0;
   @override
@@ -86,11 +94,10 @@ class _OrdersScreenState extends State<OrdersScreen> {
                           padding: EdgeInsets.only(top: 280.h),
                           child: InkWell(
                             onTap: () async => _homeCon.getCurrentOrders(
-                              driverId: 1,
-                              date: '2022-06-16',
-                              // date: DateFormatter.getFormatedDateForAPI(
-                              //   orderDate,
-                              // ),
+                              driverId: driverId,
+                              date: DateFormatter.getFormatedDateForAPI(
+                                orderDate,
+                              ),
                             ),
                             child: const Text("No Data Found!"),
                           ),
@@ -100,7 +107,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                           height: 728.h,
                           child: RefreshIndicator(
                             onRefresh: () async => _homeCon.getCurrentOrders(
-                              driverId: 1,
+                              driverId: driverId,
                               date: DateFormatter.getFormatedDateForAPI(
                                 orderDate,
                               ),

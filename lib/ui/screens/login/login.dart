@@ -85,10 +85,23 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         child: CustomBtn(
                           title: 'Sent OTP',
-                          onTapFn: () => Get.toNamed(
-                            OTPScreen.routeName,
-                            arguments: _phoneCode + _phoneCon.text,
-                          ),
+                          onTapFn: () {
+                            if (_phoneCon.text.isEmpty) {
+                              Get.showSnackbar(
+                                const GetSnackBar(
+                                  title: "Empty Field!",
+                                  message:
+                                      'Please enter a valid mobile number.',
+                                  duration: Duration(seconds: 2),
+                                ),
+                              );
+                            } else {
+                              Get.toNamed(
+                                OTPScreen.routeName,
+                                arguments: _phoneCode + _phoneCon.text,
+                              );
+                            }
+                          },
                           btnSize: const Size(295, 45),
                         ),
                       ),

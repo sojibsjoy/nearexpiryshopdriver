@@ -45,7 +45,7 @@ class DriverDetailsModel {
   int cityId;
   String username;
   String image;
-  int commission;
+  double commission;
 
   factory DriverDetailsModel.fromJson(Map<String, dynamic> json) =>
       DriverDetailsModel(

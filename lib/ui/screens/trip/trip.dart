@@ -1,21 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nearexpiryshopdriver/constants/colors.dart';
+import 'package:nearexpiryshopdriver/constants/strings.dart';
+import 'package:nearexpiryshopdriver/states/controllers/home.dart';
 import 'package:nearexpiryshopdriver/states/models/order_details/order_details.dart';
+import 'package:nearexpiryshopdriver/ui/screens/home/home.dart';
 import 'package:nearexpiryshopdriver/ui/screens/home/order_details_view.dart';
 import 'package:nearexpiryshopdriver/ui/screens/home/row_item.dart';
-import 'package:nearexpiryshopdriver/ui/screens/orders/orders.dart';
 import 'package:nearexpiryshopdriver/ui/widgets/custom_btn.dart';
 import 'package:nearexpiryshopdriver/ui/widgets/custom_network_img.dart';
 import 'package:nearexpiryshopdriver/ui/widgets/custom_scaffold.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:nearexpiryshopdriver/ui/widgets/helper_widgets.dart';
 
-class TripScreen extends StatelessWidget {
+class TripScreen extends StatefulWidget {
   static String routeName = '/trip';
-  TripScreen({Key? key}) : super(key: key);
+  const TripScreen({Key? key}) : super(key: key);
 
+  @override
+  State<TripScreen> createState() => _TripScreenState();
+}
+
+class _TripScreenState extends State<TripScreen> {
   final OrderDetailsModel oDetailsM = Get.arguments;
+  final HomeController _homeCon = Get.find<HomeController>();
+
+  bool _deliveredFlag = false;
 
   @override
   Widget build(BuildContext context) {
@@ -124,14 +134,41 @@ class TripScreen extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                CustomBtn(
-                  title: 'Delivered',
-                  onTapFn: () {
-                    // TODO: add logic to navigate to order history view
-                    Get.toNamed(OrdersScreen.routeName);
-                  },
-                  btnSize: Size(177.w, 52.h),
-                ),
+                _deliveredFlag
+                    ? SizedBox(
+                        width: 177.w,
+                        height: 52.h,
+                        child: Obx(
+                          () {
+                            if (_homeCon.updatingOrderStatusFlag.value) {
+                              return const Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            } else {
+                              Future.delayed(
+                                const Duration(seconds: 1),
+                                () => Get.toNamed(HomeScreen.routeName),
+                              );
+                              return const Center(
+                                child: Text(
+                                  'Delivered Successfull!',
+                                ),
+                              );
+                            }
+                          },
+                        ),
+                      )
+                    : CustomBtn(
+                        title: 'Delivered',
+                        onTapFn: () => setState(() {
+                          _deliveredFlag = true;
+                          _homeCon.updateOrderStatus(
+                            invoiceId: oDetailsM.invoiceId,
+                            invoiceStatusId: ConstantStrings.kDelivered,
+                          );
+                        }),
+                        btnSize: Size(177.w, 52.h),
+                      ),
                 CustomBtn(
                   title: 'Complaint',
                   onTapFn: () {},

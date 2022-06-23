@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nearexpiryshopdriver/states/models/order_details/order_details.dart';
-import 'package:nearexpiryshopdriver/ui/screens/home/dialog_view.dart';
+import 'package:nearexpiryshopdriver/ui/widgets/dialog_view.dart';
 import 'package:nearexpiryshopdriver/ui/screens/home/order_details_view.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:nearexpiryshopdriver/ui/screens/job_details/job_details.dart';

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:nearexpiryshopdriver/states/controllers/login.dart';
+import 'package:nearexpiryshopdriver/states/data/prefs.dart';
 import 'package:nearexpiryshopdriver/ui/screens/home/home.dart';
 import 'package:nearexpiryshopdriver/ui/widgets/custom_btn.dart';
 import 'package:nearexpiryshopdriver/ui/widgets/custom_field.dart';
@@ -16,7 +18,9 @@ class OTPScreen extends StatefulWidget {
 }
 
 class _OTPScreenState extends State<OTPScreen> {
+  final LoginController _loginCon = Get.find<LoginController>();
   final TextEditingController _otpCon = TextEditingController();
+  bool _submittedFlag = false;
   String phoneNumber = Get.arguments;
   @override
   Widget build(BuildContext context) {
@@ -24,7 +28,7 @@ class _OTPScreenState extends State<OTPScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            loginTopImg('assets/images/driver2.png'),
+            loginTopImg('assets/images/driver2.png', backBtnFlag: true),
             LoginOtpBg(
               middleWidget: Column(
                 children: [
@@ -58,11 +62,44 @@ class _OTPScreenState extends State<OTPScreen> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        CustomBtn(
-                          title: 'Enter OTP',
-                          onTapFn: () => Get.toNamed(HomeScreen.routeName),
-                          btnSize: const Size(108, 45),
-                        ),
+                        _submittedFlag
+                            ? Obx(() {
+                                if (_loginCon.isLoading.value) {
+                                  return const CircularProgressIndicator();
+                                } else {
+                                  if (_loginCon.driverDetails != null) {
+                                    Future.delayed(
+                                      const Duration(seconds: 1),
+                                      () async {
+                                        Preference.setLoggedInFlag(true);
+                                        Preference.setDriverID(
+                                          _loginCon.driverDetails!.driverId,
+                                        );
+                                        Get.toNamed(HomeScreen.routeName);
+                                      },
+                                    );
+                                    return const Text(
+                                      "Login Success!",
+                                    );
+                                  } else {
+                                    return const Text(
+                                      "Login Failed!",
+                                    );
+                                  }
+                                }
+                              })
+                            : CustomBtn(
+                                title: 'Enter OTP',
+                                onTapFn: () => setState(() {
+                                  _submittedFlag = true;
+                                  print(phoneNumber.substring(3));
+                                  _loginCon.loginFn(
+                                    userName: phoneNumber.substring(3),
+                                    password: '123456',
+                                  );
+                                }),
+                                btnSize: const Size(108, 45),
+                              ),
                         TextButton(
                           onPressed: () {},
                           child: Text(

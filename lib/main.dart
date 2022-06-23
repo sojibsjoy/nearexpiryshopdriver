@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:nearexpiryshopdriver/states/bindings/home.dart';
+import 'package:nearexpiryshopdriver/states/bindings/login.dart';
 import 'package:nearexpiryshopdriver/ui/screens/home/home.dart';
 import 'package:nearexpiryshopdriver/ui/screens/job_details/job_details.dart';
 import 'package:nearexpiryshopdriver/ui/screens/login/login.dart';
@@ -12,8 +13,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:nearexpiryshopdriver/ui/screens/trip/trip.dart';
 
 Future<void> main() async {
-  runApp(const MyApp());
   await GetStorage.init();
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -45,6 +46,7 @@ class MyApp extends StatelessWidget {
             GetPage(
               name: OTPScreen.routeName,
               page: () => const OTPScreen(),
+              binding: LoginBinding(),
             ),
             GetPage(
               name: JobDetailsScreen.routeName,
@@ -52,7 +54,7 @@ class MyApp extends StatelessWidget {
             ),
             GetPage(
               name: TripScreen.routeName,
-              page: () => TripScreen(),
+              page: () => const TripScreen(),
             ),
             GetPage(
               name: OrdersScreen.routeName,
@@ -60,6 +62,7 @@ class MyApp extends StatelessWidget {
             ),
           ],
           initialRoute: SplashScreen.routeName,
+          initialBinding: LoginBinding(),
         );
       },
     );

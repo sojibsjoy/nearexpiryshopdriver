@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 import 'package:nearexpiryshopdriver/states/controllers/home.dart';
+import 'package:nearexpiryshopdriver/states/data/prefs.dart';
 import 'package:nearexpiryshopdriver/states/helpers/date_formatter.dart';
 import 'package:nearexpiryshopdriver/ui/screens/home/card_item.dart';
+import 'package:nearexpiryshopdriver/ui/screens/home/drawer.dart';
 import 'package:nearexpiryshopdriver/ui/screens/home/nav_btn.dart';
 import 'package:nearexpiryshopdriver/ui/widgets/action_btn.dart';
 import 'package:nearexpiryshopdriver/ui/widgets/helper_widgets.dart';
@@ -21,11 +23,13 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final HomeController _homeCon = Get.find<HomeController>();
   DateTime orderDate = DateTime.now();
+  int driverId = 1; // 1 for default
 
   @override
   void initState() {
+    driverId = Preference.getDriverID();
     _homeCon.getCurrentOrders(
-      driverId: 1,
+      driverId: driverId,
       date: DateFormatter.getFormatedDateForAPI(orderDate),
     );
     super.initState();
@@ -40,23 +44,29 @@ class _HomeScreenState extends State<HomeScreen> {
         centerTitle: true,
         title: InkWell(
           onTap: () => _homeCon.getCurrentOrders(
-            driverId: 1,
+            driverId: driverId,
             date: DateFormatter.getFormatedDateForAPI(orderDate),
           ),
           child: Image.asset(
             'assets/images/logo_appbar.png',
           ),
         ),
-        leading: Center(
-          child: SvgPicture.asset(
-            'assets/svg/menu.svg',
-            height: 16.h,
+        leading: Builder(
+          builder: (context) => InkWell(
+            onTap: () => Scaffold.of(context).openDrawer(),
+            child: Center(
+              child: SvgPicture.asset(
+                'assets/svg/menu.svg',
+                height: 16.h,
+              ),
+            ),
           ),
         ),
         actions: const [
           ActionBtn(),
         ],
       ),
+      drawer: CustomDrawer(),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -85,9 +95,10 @@ class _HomeScreenState extends State<HomeScreen> {
                               const Duration(days: 1),
                             );
                             _homeCon.getCurrentOrders(
-                              driverId: 1,
+                              driverId: driverId,
                               date: DateFormatter.getFormatedDateForAPI(
-                                  orderDate),
+                                orderDate,
+                              ),
                             );
                           }),
                           child: const Icon(
@@ -95,14 +106,38 @@ class _HomeScreenState extends State<HomeScreen> {
                             size: 17,
                           ),
                         ),
-                        SvgPicture.asset(
-                          'assets/svg/calender.svg',
-                          height: 15.h,
-                        ),
-                        addW(5.w),
-                        // show Date
-                        Text(
-                          DateFormatter.getFormatedDate(orderDate),
+                        InkWell(
+                          onTap: () {
+                            DatePicker.showDatePicker(
+                              context,
+                              showTitleActions: true,
+                              minTime: DateTime(2018, 3, 5),
+                              maxTime: DateTime(2022, 12, 31),
+                              onConfirm: (date) => setState(() {
+                                orderDate = date;
+                                _homeCon.getCurrentOrders(
+                                  driverId: driverId,
+                                  date: DateFormatter.getFormatedDateForAPI(
+                                    orderDate,
+                                  ),
+                                );
+                              }),
+                              currentTime: orderDate,
+                            );
+                          },
+                          child: Row(
+                            children: [
+                              SvgPicture.asset(
+                                'assets/svg/calender.svg',
+                                height: 15.h,
+                              ),
+                              addW(5.w),
+                              // show Date
+                              Text(
+                                DateFormatter.getFormatedDate(orderDate),
+                              ),
+                            ],
+                          ),
                         ),
                         InkWell(
                           onTap: () => setState(() {
@@ -110,7 +145,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               const Duration(days: 1),
                             );
                             _homeCon.getCurrentOrders(
-                              driverId: 1,
+                              driverId: driverId,
                               date: DateFormatter.getFormatedDateForAPI(
                                   orderDate),
                             );
@@ -167,7 +202,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       height: 595.h,
                       child: RefreshIndicator(
                         onRefresh: () async => _homeCon.getCurrentOrders(
-                          driverId: 1,
+                          driverId: driverId,
                           date: DateFormatter.getFormatedDateForAPI(orderDate),
                         ),
                         child: ListView.builder(

@@ -5,7 +5,7 @@ class Preference {
   static const loggedInFlag = 'login_flag';
   static const driverID = 'driverID';
 
-  static getLoggedInFlag() {
+  static bool getLoggedInFlag() {
     return prefs.read(loggedInFlag) ?? false;
   }
 
@@ -13,7 +13,7 @@ class Preference {
     prefs.write(loggedInFlag, value);
   }
 
-  static getDriverID() {
+  static int getDriverID() {
     return prefs.read(driverID) ?? 1;
   }
 

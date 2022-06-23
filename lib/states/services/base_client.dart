@@ -13,4 +13,17 @@ class BaseClient {
       print(e);
     }
   }
+
+  static Future<dynamic> postData(
+      {required String api, required dynamic body}) async {
+    try {
+      var response = await Dio().post(
+        ConstantStrings.kBaseUrl + api,
+        data: body,
+      );
+      return response.data;
+    } catch (e) {
+      print(e);
+    }
+  }
 }
