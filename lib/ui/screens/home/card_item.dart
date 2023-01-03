@@ -22,7 +22,7 @@ class CardItem extends StatelessWidget {
       ),
       // onTap: () => customDialog(context),
       child: SizedBox(
-        height: 215.h,
+        height: 245.h,
         width: 390.w,
         child: Card(
           elevation: 1,

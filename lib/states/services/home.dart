@@ -21,6 +21,21 @@ class HomeService {
     return orderDetailsList;
   }
 
+  static Future<List<OrderDetailsModel>> getPreviousOrders({
+    required int driverID,
+  }) async {
+    List<OrderDetailsModel> orderDetailsList = List.empty(growable: true);
+    var response = await BaseClient.getData(
+      api: '${ConstantStrings.kDriverPreviousOrder}driverId=$driverID',
+    );
+    if (response is List) {
+      for (var element in response) {
+        orderDetailsList.add(OrderDetailsModel.fromJson(element));
+      }
+    }
+    return orderDetailsList;
+  }
+
   static Future<dynamic> updatingOrderStatus({
     required int invoiceId,
     required int invoiceStatusId,

@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:nearexpiryshopdriver/states/controllers/home.dart';
 import 'package:nearexpiryshopdriver/states/data/prefs.dart';
 import 'package:nearexpiryshopdriver/states/helpers/date_formatter.dart';
+import 'package:nearexpiryshopdriver/states/models/order_details/order_details.dart';
 import 'package:nearexpiryshopdriver/ui/screens/home/card_item.dart';
 import 'package:nearexpiryshopdriver/ui/widgets/custom_btn.dart';
 import 'package:nearexpiryshopdriver/ui/widgets/custom_scaffold.dart';
@@ -25,6 +26,13 @@ class _OrdersScreenState extends State<OrdersScreen> {
   @override
   void initState() {
     driverId = Preference.getDriverID();
+    Future.delayed(
+      const Duration(seconds: 1),
+      () => _homeCon.getCurrentOrders(
+        driverId: driverId,
+        date: DateFormatter.getFormatedDateForAPI(orderDate),
+      ),
+    );
     super.initState();
   }
 
@@ -45,6 +53,10 @@ class _OrdersScreenState extends State<OrdersScreen> {
                   title: 'Current order',
                   onTapFn: () {
                     setState(() => selectedBtnId = 0);
+                    _homeCon.getCurrentOrders(
+                      driverId: driverId,
+                      date: DateFormatter.getFormatedDateForAPI(orderDate),
+                    );
                   },
                   btnSize: Size(125.w, 32.h),
                   txtSize: 14.sp,
@@ -56,6 +68,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                   title: 'Previous order',
                   onTapFn: () {
                     setState(() => selectedBtnId = 1);
+                    _homeCon.getPreviousOrders(driverId: driverId);
                   },
                   btnSize: Size(125.w, 32.h),
                   txtSize: 14.sp,
@@ -77,59 +90,82 @@ class _OrdersScreenState extends State<OrdersScreen> {
               ],
             ),
             addH(10.h),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10.w),
-              child: Center(
-                child: Obx(
-                  () {
-                    if (_homeCon.isLoading.value) {
-                      return Padding(
-                        padding: EdgeInsets.only(top: 280.h),
-                        child: const CircularProgressIndicator(),
-                      );
-                    } else {
-                      if (_homeCon.currentOrderList == null ||
-                          _homeCon.currentOrderList!.isEmpty) {
-                        return Padding(
-                          padding: EdgeInsets.only(top: 280.h),
-                          child: InkWell(
-                            onTap: () async => _homeCon.getCurrentOrders(
-                              driverId: driverId,
-                              date: DateFormatter.getFormatedDateForAPI(
-                                orderDate,
-                              ),
-                            ),
-                            child: const Text("No Data Found!"),
-                          ),
-                        );
-                      } else {
-                        return SizedBox(
-                          height: 728.h,
-                          child: RefreshIndicator(
-                            onRefresh: () async => _homeCon.getCurrentOrders(
-                              driverId: driverId,
-                              date: DateFormatter.getFormatedDateForAPI(
-                                orderDate,
-                              ),
-                            ),
-                            child: ListView.builder(
-                              itemCount: _homeCon.currentOrderList!.length,
-                              itemBuilder: ((context, index) {
-                                return CardItem(
-                                  oDetailsModel:
-                                      _homeCon.currentOrderList![index],
-                                );
-                              }),
-                            ),
-                          ),
-                        );
-                      }
-                    }
-                  },
-                ),
-              ),
-            ),
+            getBodyView(),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget getBodyView() {
+    if (selectedBtnId == 0) {
+      return buildBodyView(
+        list: _homeCon.currentOrderList,
+        onRefreshFn: () async => _homeCon.getCurrentOrders(
+          driverId: driverId,
+          date: DateFormatter.getFormatedDateForAPI(
+            orderDate,
+          ),
+        ),
+      );
+    } else if (selectedBtnId == 1) {
+      return buildBodyView(
+        list: _homeCon.previousOrderList,
+        onRefreshFn: () async => _homeCon.getPreviousOrders(
+          driverId: driverId,
+        ),
+      );
+    } else {
+      return buildBodyView(
+        list: _homeCon.currentOrderList,
+        onRefreshFn: () async => _homeCon.getCurrentOrders(
+          driverId: driverId,
+          date: DateFormatter.getFormatedDateForAPI(
+            orderDate,
+          ),
+        ),
+      );
+    }
+  }
+
+  Widget buildBodyView({
+    required List<OrderDetailsModel>? list,
+    required Future<void> Function() onRefreshFn,
+  }) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 10.w),
+      child: Center(
+        child: Obx(
+          () {
+            if (_homeCon.isLoading.value) {
+              return Padding(
+                padding: EdgeInsets.only(top: 280.h),
+                child: const CircularProgressIndicator(),
+              );
+            } else {
+              if (list == null || list.isEmpty) {
+                return Padding(
+                  padding: EdgeInsets.only(top: 280.h),
+                  child: const Text("No Data Found!"),
+                );
+              } else {
+                return SizedBox(
+                  height: 728.h,
+                  child: RefreshIndicator(
+                    onRefresh: onRefreshFn,
+                    child: ListView.builder(
+                      itemCount: list.length,
+                      itemBuilder: ((context, index) {
+                        return CardItem(
+                          oDetailsModel: list[index],
+                        );
+                      }),
+                    ),
+                  ),
+                );
+              }
+            }
+          },
         ),
       ),
     );

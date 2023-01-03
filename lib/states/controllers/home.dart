@@ -9,6 +9,7 @@ class HomeController extends GetxController {
   RxBool cancelReasonsLoadingFlag = true.obs;
 
   List<OrderDetailsModel>? currentOrderList;
+  List<OrderDetailsModel>? previousOrderList;
   List<CancelReasonsModel>? cancelReasonList;
 
   void getCurrentOrders({
@@ -20,6 +21,19 @@ class HomeController extends GetxController {
       currentOrderList = await HomeService.getCurrentOrders(
         driverID: driverId,
         date: date,
+      );
+    } finally {
+      isLoading(false);
+    }
+  }
+
+  void getPreviousOrders({
+    required int driverId,
+  }) async {
+    isLoading(true);
+    try {
+      previousOrderList = await HomeService.getPreviousOrders(
+        driverID: driverId,
       );
     } finally {
       isLoading(false);

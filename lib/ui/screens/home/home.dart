@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:nearexpiryshopdriver/states/controllers/home.dart';
 import 'package:nearexpiryshopdriver/states/data/prefs.dart';
 import 'package:nearexpiryshopdriver/states/helpers/date_formatter.dart';
+import 'package:nearexpiryshopdriver/ui/screens/home/calender_arrow.dart';
 import 'package:nearexpiryshopdriver/ui/screens/home/card_item.dart';
 import 'package:nearexpiryshopdriver/ui/screens/home/drawer.dart';
 import 'package:nearexpiryshopdriver/ui/screens/home/nav_btn.dart';
@@ -66,7 +67,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ActionBtn(),
         ],
       ),
-      drawer: CustomDrawer(),
+      drawer: const CustomDrawer(),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -86,25 +87,22 @@ class _HomeScreenState extends State<HomeScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   SizedBox(
-                    width: 160.h,
+                    width: 250.h,
                     child: Row(
                       children: [
-                        InkWell(
-                          onTap: () => setState(() {
+                        CalenderArrow(
+                          noPadding: false,
+                          icon: Icons.arrow_back_ios,
+                          onTapFn: () => setState(() {
                             orderDate = orderDate.subtract(
                               const Duration(days: 1),
                             );
                             _homeCon.getCurrentOrders(
                               driverId: driverId,
                               date: DateFormatter.getFormatedDateForAPI(
-                                orderDate,
-                              ),
+                                  orderDate),
                             );
                           }),
-                          child: const Icon(
-                            Icons.arrow_back_ios,
-                            size: 17,
-                          ),
                         ),
                         InkWell(
                           onTap: () {
@@ -139,8 +137,10 @@ class _HomeScreenState extends State<HomeScreen> {
                             ],
                           ),
                         ),
-                        InkWell(
-                          onTap: () => setState(() {
+                        CalenderArrow(
+                          noPadding: true,
+                          icon: Icons.arrow_forward_ios,
+                          onTapFn: () => setState(() {
                             orderDate = orderDate.add(
                               const Duration(days: 1),
                             );
@@ -150,10 +150,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                   orderDate),
                             );
                           }),
-                          child: const Icon(
-                            Icons.arrow_forward_ios,
-                            size: 17,
-                          ),
                         ),
                       ],
                     ),

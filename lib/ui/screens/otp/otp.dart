@@ -75,6 +75,15 @@ class _OTPScreenState extends State<OTPScreen> {
                                         Preference.setDriverID(
                                           _loginCon.driverDetails!.driverId,
                                         );
+                                        Preference.setDriverName(
+                                          _loginCon.driverDetails!.name,
+                                        );
+                                        Preference.setDriverAddress(
+                                          _loginCon.driverDetails!.address,
+                                        );
+                                        Preference.setDriverImg(
+                                          _loginCon.driverDetails!.image,
+                                        );
                                         Get.toNamed(HomeScreen.routeName);
                                       },
                                     );

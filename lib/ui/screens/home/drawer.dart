@@ -59,7 +59,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                             ),
                             // driver image
                             child: CustomNetworkImg(
-                              url: _loginCon.driverDetails!.image,
+                              url: Preference.getDriverImg(),
                             ),
                           ),
                           addW(10.w),
@@ -69,7 +69,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                             children: [
                               // driver name
                               Text(
-                                _loginCon.driverDetails!.name,
+                                Preference.getDriverName(),
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 16.sp,
@@ -85,7 +85,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                                   ),
                                   addW(5.w),
                                   Text(
-                                    _loginCon.driverDetails!.address,
+                                    Preference.getDriverAddress(),
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontSize: 11.sp,

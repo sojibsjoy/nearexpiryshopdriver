@@ -41,6 +41,14 @@ class OrderDetailsView extends StatelessWidget {
             child: Column(
               children: [
                 RowItem(
+                  prefixTxt: 'Invoice Id:',
+                  suffixTxt: oDetailsModel.invoiceId.toString(),
+                ),
+                Divider(
+                  thickness: 1,
+                  color: Colors.grey.shade300,
+                ),
+                RowItem(
                   prefixTxt: 'To:',
                   suffixTxt: oDetailsModel.customerViewModel.firstLastName,
                 ),
